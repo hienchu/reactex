@@ -1,5 +1,9 @@
 var React = require('react'),
-	Router = require('react-router');
+	rr = require('react-router');
+var Router = rr.Router,
+    Route = rr.Route,
+    Link = rr.Link,
+    IndexRoute = rr.IndexRoute;
 
 var Header = React.createClass({
 	render: function() {
@@ -15,9 +19,9 @@ var PageNav = React.createClass({
 	render: function() {
 		return (
 			<div className="nav">
-				<Router.Link to="home">Home</Router.Link>
+				<Link to="/home">Home</Link>
 				&nbsp; | &nbsp;
-				<Router.Link to="about">About</Router.Link>
+				<Link to="/about">About</Link>
 			</div>
 		);
 	}
@@ -29,7 +33,7 @@ var App = React.createClass({
 			<div className="container">
 				<Header />
 				<PageNav />
-				<Router.RouteHandler/>
+        {this.props.children}
 			</div>
 		);
 	}
@@ -40,14 +44,12 @@ var routes = {
 	About: require('../routes/About')
 };
 
-var routes = (
-	<Router.Route name="app" path="/" handler={App}>
-		<Router.Route name="home" path="/" handler={routes.Home}/>
-		<Router.Route name="about" path="/about" handler={routes.About}/>
-		<Router.DefaultRoute handler={routes.Home}/>
-	</Router.Route>
-);
-
-Router.run(routes, Router.HistoryLocation, function (Handler) {
-	React.render(<Handler/>, document.body);
-});
+React.render((
+  <Router>
+    <Route path="/" component={App}>
+      <IndexRoute component={routes.Home}/>
+      <Route path="home" component={routes.Home} />
+      <Route path="about" component={routes.About}/>
+    </Route>
+  </Router>
+), document.body);
